@@ -37,10 +37,7 @@ namespace NSVarTypeDict{
 
 	////////////////////////////////////////////////////////
 	template<typename NewType, size_t N, size_t M, typename TCont, typename... TTypes>
-	struct NewTupleType_
-	{
-		using type = TCont;
-	};
+	struct NewTupleType_;
 
 	// when N != M
 	template<typename NewType, size_t N, size_t M,
@@ -48,7 +45,7 @@ namespace NSVarTypeDict{
 		typename... TModifiedTypes,
 		typename TCur,
 		typename... TRemainTypes>
-		struct NewTupleType_<NewType, N, M, TCont<TModifiedTypes...>, TCur, TRemainTypes...>
+	struct NewTupleType_<NewType, N, M, TCont<TModifiedTypes...>, TCur, TRemainTypes...>
 	{
 		using type = typename NewTupleType_<NewType, N + 1, M, TCont<TModifiedTypes..., TCur>, TRemainTypes...>::type;
 	};
@@ -59,9 +56,9 @@ namespace NSVarTypeDict{
 		typename... TModifiedTypes,
 		typename TCur,
 		typename... TRemainTypes>
-		struct NewTupleType_<NewType, N, N, TCont<TModifiedTypes...>, TCur, TRemainTypes...>
+	struct NewTupleType_<NewType, N, N, TCont<TModifiedTypes...>, TCur, TRemainTypes...>
 	{
-		using type = typename NewTupleType_<NewType, N + 1, N, TCont<TModifiedTypes..., NewType>, TRemainTypes...>::type;
+		using type = TCont<TModifiedTypes..., NewType, TRemainTypes...>;
 	};
 
 	template<typename NewType, size_t Pos, typename TCont, typename... TTypes>
