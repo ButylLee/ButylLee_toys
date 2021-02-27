@@ -22,8 +22,8 @@ int main()
 	// 值类型可以不同，且能被自动识别
 	foo(MyDict::Create()
 		.Set<A>(false)
-		.Set<C>(2.0F)
-		.Set<B>('1'));
+		.Set<C>(2.3F)
+		.Set<B>(1));
 
 	return 0;
 }
