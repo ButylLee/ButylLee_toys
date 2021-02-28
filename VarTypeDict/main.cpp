@@ -9,7 +9,8 @@ template<typename In>
 void foo(const In& in)
 {
 	cout << typeid(In).name() << endl;
-
+	cout << typeid(In::template ValueType<A>).name() << endl;
+	
 	auto a = in.Get<A>();
 	auto b = in.Get<B>();
 	auto c = in.Get<C>();
