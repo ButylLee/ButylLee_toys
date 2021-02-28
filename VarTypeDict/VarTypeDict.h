@@ -1,10 +1,11 @@
-﻿#include <utility>
+#include <utility>
+#include <memory>
 #include <type_traits>
 
 namespace NSVarTypeDict{
 	struct NullParameter{};
 
-	////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
 	template<size_t N, template<typename...> class Values>
 	struct Create_
 	{
@@ -20,7 +21,7 @@ namespace NSVarTypeDict{
 		using type = Values<NullParameter>;
 	};
 
-	////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
 	template<typename TFindTag, size_t N, typename TCurTag, typename... TTags>
 	struct Tag2ID_ // The CurTag doesn't match and proceed next Tag
 	{
@@ -35,7 +36,7 @@ namespace NSVarTypeDict{
 	template<typename TFindTag, typename... TTags>
 	constexpr size_t Tag2ID = Tag2ID_<TFindTag, 0, TTags...>::value;
 
-	////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
 	template<typename NewType, size_t N, size_t M, typename TCont, typename... TTypes>
 	struct NewTupleType_;
 
@@ -64,7 +65,7 @@ namespace NSVarTypeDict{
 	template<typename NewType, size_t Pos, typename TCont, typename... TTypes>
 	using NewTupleType = typename NewTupleType_<NewType, 0, Pos, TCont, TTypes...>::type;
 
-	////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
 	template<size_t N, size_t M, typename TCur, typename... TTypes>
 	struct Pos2Type_
 	{
@@ -78,7 +79,7 @@ namespace NSVarTypeDict{
 
 	template<size_t Pos, typename... TTypes>
 	using Pos2Type = typename Pos2Type_<0, Pos, TTypes...>::type;
-}
+} // namespace NSVarTypeDict
 
 
 template<typename... TParameters>
@@ -121,8 +122,11 @@ struct VarTypeDict
 			constexpr static size_t TagPos = Tag2ID<TTag, TParameters...>;
 
 			using rawType = Pos2Type<TagPos, TTypes...>;
-			return *static_cast<std::add_pointer_t<rawType>>(m_tuple[TagPos].get());
+			return *static_cast<rawType*>(m_tuple[TagPos].get());
 		}
+
+		template<typename TTag>
+		using ValueType = NSVarTypeDict::Pos2Type<NSVarTypeDict::Tag2ID<TTag, TParameters...>, TTypes...>;
 
 	private:
 		std::shared_ptr<void> m_tuple[sizeof...(TTypes)];
