@@ -132,7 +132,7 @@ public:
 	{
 		return DynArrayRef<T, Dimension>(data, dim_info.sizes, total_count);
 	}
-	auto operator[](size_t index)
+	decltype(auto) operator[](size_t index)
 	{
 		return ref()[index];
 	}

@@ -29,4 +29,8 @@ int main()
 	auto arr3(std::move(arr2));
 	assert(arr3[0][1][2] == 6);
 	assert(arr3[1][3][5] == 48);
+
+	DynArray<int, 1> arr4(5);
+	arr4[3] = 1;
+	assert(arr4[3] == 1);
 }
