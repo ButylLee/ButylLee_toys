@@ -53,19 +53,17 @@ private:
 // -------------------------------------------
 
 namespace detail {
-	template<typename Size>
-	inline size_t GetTotalSizeAndFill(size_t* dim_info, Size size) noexcept
+	template<typename TSize>
+	inline size_t GetTotalSizeAndFill(size_t* dim_info, TSize size) noexcept
 	{
-		static_assert(std::is_integral_v<Size>);
 		assert(size > 0);
 		*dim_info = size;
 		return size;
 	}
 
-	template<typename Size, typename... Sizes>
-	inline size_t GetTotalSizeAndFill(size_t* dim_info, Size size, Sizes... sizes) noexcept
+	template<typename TSize, typename... TSizes>
+	inline size_t GetTotalSizeAndFill(size_t* dim_info, TSize size, TSizes... sizes) noexcept
 	{
-		static_assert(std::is_integral_v<Size>);
 		return GetTotalSizeAndFill(dim_info, size) * GetTotalSizeAndFill(dim_info + 1, sizes...);
 	}
 }
