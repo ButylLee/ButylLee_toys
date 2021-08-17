@@ -72,7 +72,7 @@ namespace detail {
 template<typename T, size_t Dimension>
 class DynArray
 {
-	static_assert(Dimension != 0);
+	static_assert(Dimension != 0, "The dimension of DynArray should not be zero");
 public:
 	template<typename... Args>
 	DynArray(Args... sizes)
@@ -145,7 +145,7 @@ public:
 
 private:
 	T* data;
-	struct {
+	struct { // for assigning conveniently
 		size_t sizes[Dimension];
 	}dim_info;
 	size_t total_count;
