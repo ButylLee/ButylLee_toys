@@ -18,7 +18,7 @@ public:
 		, remain(total / *cur_dim_size_)
 	{}
 
-	auto operator[](size_t index) const
+	auto operator[](size_t index) const noexcept
 	{
 		return DynArrayRef<T, Dimension - 1>(data + index * remain, cur_dim_size + 1, remain);
 	}
@@ -126,11 +126,11 @@ public:
 	}
 
 public:
-	auto ref()
+	auto ref() noexcept
 	{
 		return DynArrayRef<T, Dimension>(data, dim_info.sizes, total_count);
 	}
-	decltype(auto) operator[](size_t index)
+	decltype(auto) operator[](size_t index) noexcept
 	{
 		return ref()[index];
 	}
