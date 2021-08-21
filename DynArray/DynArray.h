@@ -92,11 +92,13 @@ public:
 		data = new T[total_count];
 		std::copy_n(other.data, total_count, this->data);
 	}
-	DynArray& operator=(const DynArray& other)
+	DynArray& operator=(const DynArray& other)&
 	{
 		if (this == &other)
 			return *this;
 		DynArray temp(other);
+		// not checking each dimensions' size equal
+		// assign two different DynArrays is not recommended
 		this->swap(temp);
 		return *this;
 	}
@@ -107,22 +109,17 @@ public:
 		this->total_count = other.total_count;
 		other.data = nullptr;
 	}
-	DynArray& operator=(DynArray&& other) noexcept
+	DynArray& operator=(DynArray&& other) & noexcept
 	{
 		if (this == &other)
 			return *this;
 		~DynArray();
+		// not checking each dimensions' size equal
+		// assign two different DynArrays is not recommended
 		this->data = other.data;
 		this->dim_info = other.dim_info;
 		this->total_count = other.total_count;
 		other.data = nullptr;
-	}
-
-	void swap(DynArray& other) noexcept
-	{
-		std::swap(this->data, other.data);
-		std::swap(this->dim_info, other.dim_info);
-		std::swap(this->total_count, other.total_count);
 	}
 
 public:
@@ -141,6 +138,14 @@ public:
 	size_t total_size() const noexcept
 	{
 		return total_count;
+	}
+
+private:
+	void swap(DynArray& other) noexcept
+	{
+		std::swap(this->data, other.data);
+		std::swap(this->dim_info, other.dim_info);
+		std::swap(this->total_count, other.total_count);
 	}
 
 private:
