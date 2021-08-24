@@ -39,7 +39,7 @@ public:
 
 	T& operator[](size_t index) noexcept
 	{
-		return data[index];
+		return const_cast<T&>(static_cast<const DynArrayRef&>(*this)[index]);
 	}
 
 	const T& operator[](size_t index) const noexcept
