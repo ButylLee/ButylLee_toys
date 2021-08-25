@@ -13,17 +13,25 @@ class DynArrayRef
 {
 public:
 	DynArrayRef(T* data_, size_t* sizes, size_t* remains) noexcept
-		: data(data_), size(sizes), remain(remains)
+		: data(data_), my_size(sizes), remain(remains)
 	{}
 
 	auto operator[](size_t index) const noexcept
 	{
-		return DynArrayRef<T, Dimension - 1>(data + *remain * index, size + 1, remain + 1);
+		return DynArrayRef<T, Dimension - 1>(data + *remain * index, my_size + 1, remain + 1);
+	}
+	size_t size() const noexcept
+	{
+		return *my_size;
+	}
+	size_t total_size() const noexcept
+	{
+		return *remain * *my_size;
 	}
 
 private:
 	T* const data;
-	size_t* const size;
+	size_t* const my_size;
 	size_t* const remain;
 };
 
@@ -31,22 +39,30 @@ template<typename T>
 class DynArrayRef<T, 1>
 {
 public:
-	DynArrayRef(T* data_, size_t*, size_t*) noexcept
-		: data(data_)
+	DynArrayRef(T* data_, size_t* sizes, size_t*) noexcept
+		: data(data_), my_size(sizes)
 	{}
 
 	T& operator[](size_t index) noexcept
 	{
 		return const_cast<T&>(static_cast<const DynArrayRef&>(*this)[index]);
 	}
-
 	const T& operator[](size_t index) const noexcept
 	{
 		return data[index];
 	}
+	size_t size() const noexcept
+	{
+		return *my_size;
+	}
+	size_t total_size() const noexcept
+	{
+		return size();
+	}
 
 private:
 	T* const data;
+	size_t* const my_size;
 };
 // -------------------------------------------
 
