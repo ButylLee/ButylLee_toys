@@ -18,6 +18,7 @@ public:
 
 	auto operator[](size_t index) const noexcept
 	{
+		assert(index < *my_size);
 		return DynArrayRef<T, Dimension - 1>(data + *remain * index, my_size + 1, remain + 1);
 	}
 	size_t size() const noexcept
@@ -49,6 +50,7 @@ public:
 	}
 	const T& operator[](size_t index) const noexcept
 	{
+		assert(index < *my_size);
 		return data[index];
 	}
 	size_t size() const noexcept
