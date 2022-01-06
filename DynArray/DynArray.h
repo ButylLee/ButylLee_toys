@@ -99,7 +99,7 @@ namespace detail {
 }
 
 // --------------- Main class DynArray ---------------
-template<typename T, size_t Dimension>
+template<typename T, size_t Dimension = 1>
 class DynArray
 {
 	static_assert(Dimension != 0, "The dimension of DynArray should not be zero");
