@@ -105,7 +105,7 @@ class DynArray
 	static_assert(Dimension != 0, "The dimension of DynArray should not be zero");
 public:
 	template<typename... Args>
-	DynArray(Args... sizes)
+	explicit DynArray(Args... sizes)
 		: total_count{ detail::GetTotalSizeAndFill(dim_info.sizes, sizes...) }
 		, data{ detail::NullptrAndFillRemains(Dimension, dim_info.remains, dim_info.sizes) }
 	{
