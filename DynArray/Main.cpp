@@ -34,4 +34,10 @@ int main()
 	DynArray<int, 1> arr4(5);
 	arr4[3] = 1;
 	assert(arr4[3] == 1);
+
+	DynArray<int, 3> arr5(2, 4, 6);
+	assert(arr5.total_size() == 48);
+	assert(arr5.ref().total_size() == 48);
+	assert(arr5[1].total_size() == 24);
+	assert(arr5[1][2].total_size() == 6);
 }
