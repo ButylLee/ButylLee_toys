@@ -61,6 +61,8 @@ int main()
 	auto arr6val = arr6ref3[3];
 	static_assert(std::is_same_v<decltype(arr6val), int>);
 
-	const DynArray<int, 2> arr7(2, 3);
-	//arr7[1][2] = 42;
+	DynArray<int, 2> arr7(2, 3);
+	arr7[1][2] = 42;
+	const DynArray<int, 2>& arr7ref = arr7;
+	assert(arr7ref[1][2] == 42);
 }

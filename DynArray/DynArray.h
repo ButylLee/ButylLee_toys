@@ -12,8 +12,8 @@ template<typename T, size_t Dimension>
 class DynArrayRef
 {
 public:
-	DynArrayRef(T* data_, size_t* sizes, size_t* remains) noexcept
-		: arr_data(data_), my_size(sizes), my_remain(remains)
+	DynArrayRef(const T* data, const size_t* sizes, const size_t* remains) noexcept
+		: arr_data(data), arr_size(sizes), arr_remain(remains)
 	{}
 
 	DynArrayRef<T, Dimension - 1> operator[](size_t index) noexcept
@@ -23,8 +23,8 @@ public:
 	}
 	const DynArrayRef<T, Dimension - 1> operator[](size_t index) const noexcept
 	{
-		assert(index < *my_size);
-		return DynArrayRef<T, Dimension - 1>(arr_data + *my_remain * index, my_size + 1, my_remain + 1);
+		assert(index < *arr_size);
+		return DynArrayRef<T, Dimension - 1>(arr_data + *arr_remain * index, arr_size + 1, arr_remain + 1);
 	}
 	DynArrayRef<T, Dimension - 1> front() noexcept
 	{
@@ -36,23 +36,23 @@ public:
 	}
 	DynArrayRef<T, Dimension - 1> back() noexcept
 	{
-		return (*this)[*my_size - 1];
+		return (*this)[*arr_size - 1];
 	}
 	const DynArrayRef<T, Dimension - 1> back() const noexcept
 	{
-		return (*this)[*my_size - 1];
+		return (*this)[*arr_size - 1];
 	}
 	size_t size() const noexcept
 	{
-		return *my_size;
+		return *arr_size;
 	}
 	size_t total_size() const noexcept
 	{
-		return *my_remain * *my_size;
+		return *arr_remain * *arr_size;
 	}
 	T* data() noexcept
 	{
-		return arr_data;
+		return const_cast<T*>(arr_data);
 	}
 	const T* data() const noexcept
 	{
@@ -60,17 +60,17 @@ public:
 	}
 
 private:
-	T* const arr_data;
-	size_t* const my_size;
-	size_t* const my_remain;
+	const T* arr_data;
+	const size_t* arr_size;
+	const size_t* arr_remain;
 };
 
 template<typename T>
 class DynArrayRef<T, 1>
 {
 public:
-	DynArrayRef(T* data_, size_t* sizes, size_t*) noexcept
-		: arr_data(data_), my_size(sizes)
+	DynArrayRef(const T* data, const size_t* sizes, const size_t*) noexcept
+		: arr_data(data), arr_size(sizes)
 	{}
 
 	T& operator[](size_t index) noexcept
@@ -79,7 +79,7 @@ public:
 	}
 	const T& operator[](size_t index) const noexcept
 	{
-		assert(index < *my_size);
+		assert(index < *arr_size);
 		return arr_data[index];
 	}
 	T& front() noexcept
@@ -92,15 +92,15 @@ public:
 	}
 	T& back() noexcept
 	{
-		return (*this)[*my_size - 1];
+		return (*this)[*arr_size - 1];
 	}
 	const T& back() const noexcept
 	{
-		return (*this)[*my_size - 1];
+		return (*this)[*arr_size - 1];
 	}
 	size_t size() const noexcept
 	{
-		return *my_size;
+		return *arr_size;
 	}
 	size_t total_size() const noexcept
 	{
@@ -108,7 +108,7 @@ public:
 	}
 	T* data() noexcept
 	{
-		return arr_data;
+		return const_cast<T*>(arr_data);
 	}
 	const T* data() const noexcept
 	{
@@ -116,8 +116,8 @@ public:
 	}
 
 private:
-	T* const arr_data;
-	size_t* const my_size;
+	const T* arr_data;
+	const size_t* arr_size;
 };
 // -------------------------------------------
 
