@@ -65,4 +65,18 @@ int main()
 	arr7[1][2] = 42;
 	const DynArray<int, 2>& arr7ref = arr7;
 	assert(arr7ref[1][2] == 42);
+
+	DynArray<int, 2> arr8(3, 4);
+	for (auto& r : arr8)
+	{
+		for (auto& i : r)
+		{
+			i = 42;
+		}
+	}
+
+	for (const auto& i : arr8.iter_all())
+	{
+		assert(i == 42);
+	}
 }
