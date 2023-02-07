@@ -10,6 +10,7 @@
  */
 
 #include <climits>
+#include <cassert>
 #include <string>
 
 #define RANDOM_SEED ((__TIME__[0] - '0') * 1ULL + (__TIME__[1] - '0') * 10ULL + \
@@ -60,9 +61,10 @@ public:
 	[[nodiscard]]
 	operator std::basic_string<TChar>() const
 	{
+		assert(detail::DecryptChar(str[N - 1], key) == TChar('\0'));
 		std::basic_string<TChar> decrypted;
-		decrypted.reserve(N);
-		for (size_t i = 0; i < N; i++)
+		decrypted.reserve(N - 1);
+		for (size_t i = 0; i < N - 1; i++) // discard redundant '\0'
 		{
 			decrypted += detail::DecryptChar(str[i], key);
 		}
