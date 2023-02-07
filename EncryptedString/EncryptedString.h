@@ -9,9 +9,7 @@
  * Just add suffix [_crypt] to string literal: "a string"_crypt
  */
 
-#pragma warning(disable:26451) // incorrect overflow warning
 #include <climits>
-#include <cassert>
 #include <string>
 
 #define RANDOM_SEED ((__TIME__[0] - '0') * 1ULL + (__TIME__[1] - '0') * 10ULL + \
@@ -44,81 +42,66 @@ namespace detail {
 	}
 }
 
-template<typename TChar>
+template<typename TChar, size_t N>
 class EncryptedString
 {
 public:
+	using CharType = TChar;
+
 	// encrypt in compile-time
-	constexpr EncryptedString(const TChar* origin_str, size_t len) noexcept
-		:str_len(len)
+	constexpr EncryptedString(const TChar(&origin_str)[N]) noexcept
 	{
-		for (size_t i = 0; i < len; i++)
+		for (size_t i = 0; i < N; i++)
 		{
 			str[i] = detail::EncryptChar(origin_str[i], key);
 		}
 	}
 	// decrypt in run-time
 	[[nodiscard]]
-	operator std::basic_string<TChar> () const&& noexcept
+	operator std::basic_string<TChar>() const
 	{
-		assert(str_len <= sizeof str);
 		std::basic_string<TChar> decrypted;
-		decrypted.reserve(str_len);
-		for (size_t i = 0; i < str_len; i++)
+		decrypted.reserve(N);
+		for (size_t i = 0; i < N; i++)
 		{
 			decrypted += detail::DecryptChar(str[i], key);
 		}
 		return decrypted;
 	}
 
+public:
+	TChar str[N] = {};
 private:
 	static constexpr TChar key =
 		static_cast<TChar>( // casting to signed type is implementation-defined behavior until C++20
 			detail::GetRandom(0x00, (0x01ULL << sizeof(TChar) * CHAR_BIT) - 1)
 		);
-	size_t str_len;
-	TChar str[1024] = {};
 };
 
 #ifndef NO_ENCRYPTED_STRING
-inline std::string operator""_crypt(const char* str, size_t len) noexcept
+template<EncryptedString Str>
+inline std::basic_string<typename decltype(Str)::CharType> operator""_crypt() noexcept
 {
-	return EncryptedString<char>(str, len);
-}
-inline std::wstring operator""_crypt(const wchar_t* str, size_t len) noexcept
-{
-	return EncryptedString<wchar_t>(str, len);
-}
-inline std::u8string operator""_crypt(const char8_t* str, size_t len) noexcept
-{
-	return EncryptedString<char8_t>(str, len);
-}
-inline std::u16string operator""_crypt(const char16_t* str, size_t len) noexcept
-{
-	return EncryptedString<char16_t>(str, len);
-}
-inline std::u32string operator""_crypt(const char32_t* str, size_t len) noexcept
-{
-	return EncryptedString<char32_t>(str, len);
+	return Str;
 }
 #else
-inline std::string operator""_crypt(const char* str, size_t len) noexcept
+constexpr std::string operator""_crypt(const char* str, size_t) noexcept
 {
 	return str;
 }
-inline std::wstring operator""_crypt(const wchar_t* str, size_t len) noexcept
+constexpr std::wstring operator""_crypt(const wchar_t* str, size_t) noexcept
 {
 	return str;
 }
-inline std::u8string operator""_crypt(const char8_t* str, size_t len) noexcept
+constexpr std::u8string operator""_crypt(const char8_t* str, size_t) noexcept
 {
 	return str;
 }
-inline std::u16string operator""_crypt(const char16_t* str, size_t len) noexcept
+constexpr std::u16string operator""_crypt(const char16_t* str, size_t) noexcept
 {
 	return str;
 }
-inline std::u32string operator""_crypt(const char32_t* str, size_t len) noexcept
+constexpr std::u32string operator""_crypt(const char32_t* str, size_t) noexcept
 {
 	return str;
 }
