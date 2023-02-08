@@ -41,6 +41,11 @@ namespace detail {
 	{
 		return ~ch ^ key;
 	}
+	template<typename TChar>
+	constexpr TChar ObfuscateKey(TChar key, size_t i)
+	{
+		return static_cast<TChar>(static_cast<size_t>(key) + i);
+	}
 }
 
 template<typename TChar, size_t N>
@@ -54,19 +59,19 @@ public:
 	{
 		for (size_t i = 0; i < N; i++)
 		{
-			str[i] = detail::EncryptChar(origin_str[i], key);
+			str[i] = detail::EncryptChar(origin_str[i], detail::ObfuscateKey(key, i));
 		}
 	}
 	// decrypt in run-time
 	[[nodiscard]]
 	operator std::basic_string<TChar>() const
 	{
-		assert(detail::DecryptChar(str[N - 1], key) == TChar('\0'));
+		assert(detail::DecryptChar(str[N - 1], detail::ObfuscateKey(key, N - 1)) == TChar('\0'));
 		std::basic_string<TChar> decrypted;
 		decrypted.reserve(N - 1);
 		for (size_t i = 0; i < N - 1; i++) // discard redundant '\0'
 		{
-			decrypted += detail::DecryptChar(str[i], key);
+			decrypted += detail::DecryptChar(str[i], detail::ObfuscateKey(key, i));
 		}
 		return decrypted;
 	}
