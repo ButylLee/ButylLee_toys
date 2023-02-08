@@ -25,7 +25,7 @@ namespace detail {
 	}
 	constexpr unsigned long long GenerateRandom()
 	{
-		return LinearCongruentialGenerator((__TIME__[0] - '0') * (__TIME__[1] - '0'));
+		return LinearCongruentialGenerator((__TIME__[0] - '/') * (__TIME__[1] - '/'));
 	}
 	constexpr unsigned long long GetRandom(unsigned long long min, unsigned long long max)
 	{
