@@ -11,6 +11,8 @@ int main()
 
 	DynArray<int, 3> arr(4, 5, 6);
 	assert(arr.size() == 4);
+	assert(arr.size(1) == 5);
+	assert(arr.size(2) == 6);
 	assert(arr.total_size() == 120);
 	for (int i = 0; i < 4; i++)
 	{
@@ -54,10 +56,16 @@ int main()
 	DynArray<int, 3> arr6(2, 3, 4);
 	auto arr6ref1 = arr6.ref();
 	static_assert(std::is_same_v<decltype(arr6ref1), DynArrayRef<int, 3>>);
+	assert(arr6ref1.size() == 2);
+	assert(arr6ref1.size(1) == 3);
+	assert(arr6ref1.size(2) == 4);
 	auto arr6ref2 = arr6ref1[1];
 	static_assert(std::is_same_v<decltype(arr6ref2), DynArrayRef<int, 2>>);
+	assert(arr6ref2.size() == 3);
+	assert(arr6ref2.size(1) == 4);
 	auto arr6ref3 = arr6ref2[2];
 	static_assert(std::is_same_v<decltype(arr6ref3), DynArrayRef<int, 1>>);
+	assert(arr6ref3.size() == 4);
 	auto arr6val = arr6ref3[3];
 	static_assert(std::is_same_v<decltype(arr6val), int>);
 

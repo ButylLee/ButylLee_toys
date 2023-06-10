@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <utility>
 #include <cassert>
+#include <cstddef>
 
 // ------------------- proxy class -------------------
 template<typename T, size_t Dimension>
@@ -18,8 +19,8 @@ public:
 
 	DynArrayRef<T, Dimension - 1> operator[](size_t index) const noexcept
 	{
-		assert(index < *arr_size);
-		return DynArrayRef<T, Dimension - 1>(arr_data + *arr_remain * index, arr_size + 1, arr_remain + 1);
+		assert(index < arr_size[0]);
+		return DynArrayRef<T, Dimension - 1>(arr_data + arr_remain[0] * index, arr_size + 1, arr_remain + 1);
 	}
 	DynArrayRef<T, Dimension - 1> front() const noexcept
 	{
@@ -27,15 +28,16 @@ public:
 	}
 	DynArrayRef<T, Dimension - 1> back() const noexcept
 	{
-		return (*this)[*arr_size - 1];
+		return (*this)[arr_size[0] - 1];
 	}
-	size_t size() const noexcept
+	size_t size(size_t dimension = 0) const noexcept
 	{
-		return *arr_size;
+		assert(dimension < Dimension);
+		return arr_size[dimension];
 	}
 	size_t total_size() const noexcept
 	{
-		return *arr_remain * *arr_size;
+		return arr_remain[0] * arr_size[0];
 	}
 	T* data() const noexcept
 	{
@@ -58,7 +60,7 @@ public:
 
 	T& operator[](size_t index) const noexcept
 	{
-		assert(index < *arr_size);
+		assert(index < arr_size[0]);
 		return arr_data[index];
 	}
 	T& front() const noexcept
@@ -67,11 +69,12 @@ public:
 	}
 	T& back() const noexcept
 	{
-		return (*this)[*arr_size - 1];
+		return (*this)[arr_size[0] - 1];
 	}
-	size_t size() const noexcept
+	size_t size(size_t dimension = 0) const noexcept
 	{
-		return *arr_size;
+		assert(dimension == 0);
+		return arr_size[0];
 	}
 	size_t total_size() const noexcept
 	{
@@ -102,7 +105,7 @@ public:
 	}
 	DynArrayIterator& operator++() noexcept
 	{
-		arr_data += *arr_remain;
+		arr_data += arr_remain[0];
 		return *this;
 	}
 	DynArrayIterator operator++(int) noexcept
@@ -113,7 +116,7 @@ public:
 	}
 	DynArrayIterator& operator--() noexcept
 	{
-		arr_data -= *arr_remain;
+		arr_data -= arr_remain[0];
 		return *this;
 	}
 	DynArrayIterator operator--(int) noexcept
@@ -138,7 +141,7 @@ public:
 
 	DynArrayIterator<T, Dimension - 1> end() const noexcept
 	{
-		return DynArrayIterator<T, Dimension - 1>(arr_data + *arr_remain, arr_size + 1, arr_remain + 1);
+		return DynArrayIterator<T, Dimension - 1>(arr_data + arr_remain[0], arr_size + 1, arr_remain + 1);
 	}
 
 private:
@@ -151,8 +154,8 @@ template<typename T>
 class DynArrayIterator<T, 1>
 {
 public:
-	DynArrayIterator(T* data, const size_t* size, const size_t* remain) noexcept
-		: arr_data(data), arr_size(size), arr_remain(remain)
+	DynArrayIterator(T* data, const size_t*, const size_t* remain) noexcept
+		: arr_data(data), arr_remain(remain)
 	{}
 
 	T& operator*() const noexcept
@@ -161,7 +164,7 @@ public:
 	}
 	DynArrayIterator& operator++() noexcept
 	{
-		arr_data += *arr_remain;
+		arr_data += arr_remain[0];
 		return *this;
 	}
 	DynArrayIterator operator++(int) noexcept
@@ -172,7 +175,7 @@ public:
 	}
 	DynArrayIterator& operator--() noexcept
 	{
-		arr_data -= *arr_remain;
+		arr_data -= arr_remain[0];
 		return *this;
 	}
 	DynArrayIterator operator--(int) noexcept
@@ -192,7 +195,6 @@ public:
 
 private:
 	T* arr_data;
-	const size_t* arr_size;
 	const size_t* arr_remain;
 };
 
@@ -355,9 +357,10 @@ public:
 	{
 		return ref()[size() - 1];
 	}
-	size_t size() const noexcept
+	size_t size(size_t dimension = 0) const noexcept
 	{
-		return dim_info.sizes[0];
+		assert(dimension < Dimension);
+		return dim_info.sizes[dimension];
 	}
 	size_t total_size() const noexcept
 	{
