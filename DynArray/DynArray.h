@@ -111,7 +111,7 @@ public:
 	DynArrayIterator operator++(int) noexcept
 	{
 		DynArrayIterator tmp = *this;
-		this->operator++();
+		++*this;
 		return tmp;
 	}
 	DynArrayIterator& operator--() noexcept
@@ -122,9 +122,40 @@ public:
 	DynArrayIterator operator--(int) noexcept
 	{
 		DynArrayIterator tmp = *this;
-		this->operator--();
+		--*this;
 		return tmp;
 	}
+	DynArrayIterator& operator+=(size_t offset) noexcept
+	{
+		arr_data += arr_remain[0] * offset;
+		return *this;
+	}
+	DynArrayIterator& operator-=(size_t offset) noexcept
+	{
+		arr_data -= arr_remain[0] * offset;
+		return *this;
+	}
+	friend DynArrayIterator operator+(DynArrayIterator lhs, size_t offset) noexcept
+	{
+		lhs += offset;
+		return lhs;
+	}
+	friend DynArrayIterator operator+(size_t offset, DynArrayIterator rhs) noexcept
+	{
+		rhs += offset;
+		return rhs;
+	}
+	friend DynArrayIterator operator-(DynArrayIterator lhs, size_t offset) noexcept
+	{
+		lhs -= offset;
+		return lhs;
+	}
+	friend size_t operator-(const DynArrayIterator& lhs, const DynArrayIterator& rhs) noexcept
+	{
+		assert(lhs.arr_remain[0] == rhs.arr_remain[0]);
+		return (lhs.arr_data - rhs.arr_data) / lhs.arr_remain[0];
+	}
+
 	bool operator==(const DynArrayIterator& rhs) const noexcept
 	{
 		return this->arr_data == rhs.arr_data;
@@ -133,12 +164,27 @@ public:
 	{
 		return !(*this == rhs);
 	}
+	bool operator<(const DynArrayIterator& rhs) const noexcept
+	{
+		return this->arr_data < rhs.arr_data;
+	}
+	bool operator>(const DynArrayIterator& rhs) const noexcept
+	{
+		return rhs < *this;
+	}
+	bool operator<=(const DynArrayIterator& rhs) const noexcept
+	{
+		return !(rhs < *this);
+	}
+	bool operator>=(const DynArrayIterator& rhs) const noexcept
+	{
+		return !(*this < rhs);
+	}
 
 	DynArrayIterator<T, Dimension - 1> begin() const noexcept
 	{
 		return DynArrayIterator<T, Dimension - 1>(arr_data, arr_size + 1, arr_remain + 1);
 	}
-
 	DynArrayIterator<T, Dimension - 1> end() const noexcept
 	{
 		return DynArrayIterator<T, Dimension - 1>(arr_data + arr_remain[0], arr_size + 1, arr_remain + 1);
@@ -154,8 +200,8 @@ template<typename T>
 class DynArrayIterator<T, 1>
 {
 public:
-	DynArrayIterator(T* data, const size_t*, const size_t* remain) noexcept
-		: arr_data(data), arr_remain(remain)
+	DynArrayIterator(T* data, const size_t*, const size_t*) noexcept
+		: arr_data(data)
 	{}
 
 	T& operator*() const noexcept
@@ -164,25 +210,58 @@ public:
 	}
 	DynArrayIterator& operator++() noexcept
 	{
-		arr_data += arr_remain[0];
+		++arr_data;
 		return *this;
 	}
 	DynArrayIterator operator++(int) noexcept
 	{
 		DynArrayIterator tmp = *this;
-		this->operator++();
+		++*this;
 		return tmp;
 	}
 	DynArrayIterator& operator--() noexcept
 	{
-		arr_data -= arr_remain[0];
+		--arr_data;
 		return *this;
 	}
 	DynArrayIterator operator--(int) noexcept
 	{
 		DynArrayIterator tmp = *this;
-		this->operator--();
+		--*this;
 		return tmp;
+	}
+	DynArrayIterator& operator+=(size_t offset) noexcept
+	{
+		arr_data += offset;
+		return *this;
+	}
+	DynArrayIterator& operator-=(size_t offset) noexcept
+	{
+		arr_data -= offset;
+		return *this;
+	}
+	friend DynArrayIterator operator+(DynArrayIterator lhs, size_t offset) noexcept
+	{
+		lhs += offset;
+		return lhs;
+	}
+	friend DynArrayIterator operator+(size_t offset, DynArrayIterator rhs) noexcept
+	{
+		rhs += offset;
+		return rhs;
+	}
+	friend DynArrayIterator operator-(DynArrayIterator lhs, size_t offset) noexcept
+	{
+		lhs -= offset;
+		return lhs;
+	}
+	friend size_t operator-(const DynArrayIterator& lhs, const DynArrayIterator& rhs) noexcept
+	{
+		return lhs.arr_data - rhs.arr_data;
+	}
+	T& operator[](size_t index) const noexcept
+	{
+		return arr_data[index];
 	}
 	bool operator==(const DynArrayIterator& rhs) const noexcept
 	{
@@ -192,10 +271,25 @@ public:
 	{
 		return !(*this == rhs);
 	}
+	bool operator<(const DynArrayIterator& rhs) const noexcept
+	{
+		return this->arr_data < rhs.arr_data;
+	}
+	bool operator>(const DynArrayIterator& rhs) const noexcept
+	{
+		return rhs < *this;
+	}
+	bool operator<=(const DynArrayIterator& rhs) const noexcept
+	{
+		return !(rhs < *this);
+	}
+	bool operator>=(const DynArrayIterator& rhs) const noexcept
+	{
+		return !(*this < rhs);
+	}
 
 private:
 	T* arr_data;
-	const size_t* arr_remain;
 };
 
 template<typename T>

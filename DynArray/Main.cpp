@@ -75,22 +75,24 @@ int main()
 	assert(arr7ref[1][2] == 42);
 
 	DynArray<int, 3> arr8(2, 3, 4);
+	int num = 0;
 	for (auto& row : arr8)
 	{
 		for (auto& column : row)
 		{
 			for (auto& item : column)
 			{
-				item = 42;
+				item = num++;
 			}
 		}
 	}
 
 	{
 		int count = 0;
+		num = 0;
 		for (const auto& i : arr8.iter_all())
 		{
-			assert(i == 42);
+			assert(i == num++);
 			count++;
 		}
 		assert(count == arr8.total_size());
