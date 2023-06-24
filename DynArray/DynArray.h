@@ -393,9 +393,9 @@ public:
 
 	DynArray(DynArray&& other) noexcept
 	{
-		this->arr_data = other.arr_data;
 		this->dim_info = other.dim_info;
 		this->total_count = other.total_count;
+		this->arr_data = other.arr_data;
 		other.arr_data = nullptr;
 #ifndef NDEBUG
 		other.~DynArray();
@@ -404,8 +404,6 @@ public:
 
 	DynArray& operator=(DynArray other) & noexcept
 	{
-		// not checking each dimensions' size equal
-		// assign two different DynArrays is undefined
 		this->swap(other);
 		return *this;
 	}
