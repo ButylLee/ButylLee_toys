@@ -59,19 +59,19 @@ public:
 	{
 		for (size_t i = 0; i < N; i++)
 		{
-			str[i] = detail::EncryptChar(origin_str[i], detail::ObfuscateKey(key, i));
+			str[i] = detail::EncryptChar(origin_str[i], detail::ObfuscateKey(Key, i));
 		}
 	}
 	// decrypt in run-time
 	[[nodiscard]]
 	operator std::basic_string<TChar>() const
 	{
-		assert(detail::DecryptChar(str[N - 1], detail::ObfuscateKey(key, N - 1)) == TChar('\0'));
+		assert(detail::DecryptChar(str[N - 1], detail::ObfuscateKey(Key, N - 1)) == TChar('\0'));
 		std::basic_string<TChar> decrypted;
 		decrypted.reserve(N - 1);
 		for (size_t i = 0; i < N - 1; i++) // discard redundant '\0'
 		{
-			decrypted += detail::DecryptChar(str[i], detail::ObfuscateKey(key, i));
+			decrypted += detail::DecryptChar(str[i], detail::ObfuscateKey(Key, i));
 		}
 		return decrypted;
 	}
@@ -79,7 +79,7 @@ public:
 public:
 	TChar str[N] = {};
 private:
-	static constexpr TChar key =
+	static constexpr TChar Key =
 		static_cast<TChar>( // casting to signed type is implementation-defined behavior until C++20
 			detail::GetRandom(0x00, (0x01ULL << sizeof(TChar) * CHAR_BIT) - 1)
 		);
