@@ -304,10 +304,13 @@ public:
 	{
 		return arr_begin;
 	}
-
 	T* end() const noexcept
 	{
 		return arr_end;
+	}
+	size_t size() const noexcept
+	{
+		return arr_end - arr_begin;
 	}
 
 private:
