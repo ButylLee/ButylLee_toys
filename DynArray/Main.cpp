@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <utility>
+#include <ranges>
 
 int main()
 {
@@ -96,5 +97,14 @@ int main()
 			count++;
 		}
 		assert(count == arr8.total_size());
+	}
+	{
+		DynArray<int> arr(10);
+		for (size_t i = 0; i < 10; i++)
+			arr[i] = i;
+		for (size_t i = 9; auto num : arr | std::views::reverse)
+			assert(num == i--);
+		for (size_t i = 9; auto num:arr.iter_all() | std::views::reverse)
+			assert(num == i--);
 	}
 }

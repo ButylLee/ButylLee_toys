@@ -95,6 +95,10 @@ template<typename T, size_t Dimension>
 class DynArrayIterator
 {
 public:
+	using value_type = T;
+
+public:
+	DynArrayIterator() = default;
 	DynArrayIterator(T* data, const size_t* size, const size_t* remain) noexcept
 		: arr_data(data), arr_size(size), arr_remain(remain)
 	{}
@@ -191,15 +195,19 @@ public:
 	}
 
 private:
-	T* arr_data;
-	const size_t* arr_size;
-	const size_t* arr_remain;
+	T* arr_data = nullptr;
+	const size_t* arr_size = nullptr;
+	const size_t* arr_remain = nullptr;
 };
 
 template<typename T>
 class DynArrayIterator<T, 1>
 {
 public:
+	using value_type = T;
+
+public:
+	DynArrayIterator() = default;
 	DynArrayIterator(T* data, const size_t*, const size_t*) noexcept
 		: arr_data(data)
 	{}
@@ -263,6 +271,7 @@ public:
 	{
 		return arr_data[index];
 	}
+
 	bool operator==(const DynArrayIterator& rhs) const noexcept
 	{
 		return this->arr_data == rhs.arr_data;
@@ -289,7 +298,7 @@ public:
 	}
 
 private:
-	T* arr_data;
+	T* arr_data = nullptr;
 };
 
 template<typename T>
